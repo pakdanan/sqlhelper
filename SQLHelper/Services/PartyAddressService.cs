@@ -15,21 +15,10 @@ namespace SQLHelper.Services
 
         #region Fields
 
-        private PartyAddressPersister partyAddressPersister;
-
         #endregion
 
 
         #region Constructors
-        public PartyAddressService()
-        {
-            partyAddressPersister = new PartyAddressPersister();
-        }
-
-        public PartyAddressService(PartyAddressPersister partyAddressPersister)
-        {
-            this.partyAddressPersister = partyAddressPersister;
-        }
 
         #endregion
 
@@ -42,22 +31,22 @@ namespace SQLHelper.Services
         public PartyAddress GetPartyAddressByPartyId(int partyID)
         {
             string query = @"SELECT    p.*
-	                                  ,pa.[ID]                 as PartyAddress_ID
-                                      ,pa.[PartyID]            as PartyAddress_PartyID
-                                      ,pa.[Code]               as PartyAddress_Code
-                                      ,pa.[Name]               as PartyAddress_Name
-                                      ,pa.[Description]        as PartyAddress_Description
-                                      ,pa.[Address]            as PartyAddress_Address
-                                      ,pa.[PostCode]           as PartyAddress_PostCode
-                                      ,pa.[Telephone]          as PartyAddress_Telephone
-                                      ,pa.[RegionID]           as PartyAddress_RegionID
-                                      ,pa.[CreatedById]        as PartyAddress_CreatedById
-                                      ,pa.[CreatedByName]      as PartyAddress_CreatedByName
-                                      ,pa.[CreatedOn]          as PartyAddress_CreatedOn
-                                      ,pa.[LastModifiedById]   as PartyAddress_LastModifiedById
-                                      ,pa.[LastModifiedByName] as PartyAddress_LastModifiedByName
-                                      ,pa.[LastModifiedOn]     as PartyAddress_LastModifiedOn
-                                      ,pa.[Status]             as PartyAddress_Status
+	                                  ,pa.[ID]                 as Address_ID
+                                      ,pa.[PartyID]            as Address_PartyID
+                                      ,pa.[Code]               as Address_Code
+                                      ,pa.[Name]               as Address_Name
+                                      ,pa.[Description]        as Address_Description
+                                      ,pa.[Address]            as Address_FullAddress
+                                      ,pa.[PostCode]           as Address_PostCode
+                                      ,pa.[Telephone]          as Address_Telephone
+                                      ,pa.[RegionID]           as Address_RegionID
+                                      ,pa.[CreatedById]        as Address_CreatedById
+                                      ,pa.[CreatedByName]      as Address_CreatedByName
+                                      ,pa.[CreatedOn]          as Address_CreatedOn
+                                      ,pa.[LastModifiedById]   as Address_LastModifiedById
+                                      ,pa.[LastModifiedByName] as Address_LastModifiedByName
+                                      ,pa.[LastModifiedOn]     as Address_LastModifiedOn
+                                      ,pa.[Status]             as Address_Status
 	                                  ,r.[ID]                 as Region_ID
                                       ,r.[Code]               as Region_Code
                                       ,r.[Name]               as Region_Name
@@ -78,12 +67,6 @@ namespace SQLHelper.Services
             return dao.GetSingle<PartyAddress>(command);
         }
  
-        public int Save(PartyAddress partyAddress, SqlDao dao)
-        {
-            return partyAddressPersister.Save(partyAddress,dao);
-
-        }
-
 
 
         #endregion
