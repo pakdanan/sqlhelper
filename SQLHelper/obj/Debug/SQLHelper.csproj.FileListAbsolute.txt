@@ -1,0 +1,5 @@
+c:\users\danan.purwantoro\documents\visual studio 2015\Projects\SQLHelper\SQLHelper\obj\Debug\SQLHelper.csprojResolveAssemblyReference.cache
+c:\users\danan.purwantoro\documents\visual studio 2015\Projects\SQLHelper\SQLHelper\bin\Debug\SQLHelper.dll
+c:\users\danan.purwantoro\documents\visual studio 2015\Projects\SQLHelper\SQLHelper\bin\Debug\SQLHelper.pdb
+c:\users\danan.purwantoro\documents\visual studio 2015\Projects\SQLHelper\SQLHelper\obj\Debug\SQLHelper.dll
+c:\users\danan.purwantoro\documents\visual studio 2015\Projects\SQLHelper\SQLHelper\obj\Debug\SQLHelper.pdb
