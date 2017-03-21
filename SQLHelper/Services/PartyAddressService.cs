@@ -58,7 +58,20 @@ namespace SQLHelper.Services
                                       ,pa.[LastModifiedByName] as PartyAddress_LastModifiedByName
                                       ,pa.[LastModifiedOn]     as PartyAddress_LastModifiedOn
                                       ,pa.[Status]             as PartyAddress_Status
-            FROM Party p JOIN PartyAddress pa ON p.ID=pa.PartyID WHERE pa.PartyID=@partyID  ";
+	                                  ,r.[ID]                 as Region_ID
+                                      ,r.[Code]               as Region_Code
+                                      ,r.[Name]               as Region_Name
+                                      ,r.[Description]        as Region_Description
+                                      ,r.[CreatedById]        as Region_CreatedById
+                                      ,r.[CreatedByName]      as Region_CreatedByName
+                                      ,r.[CreatedOn]          as Region_CreatedOn
+                                      ,r.[LastModifiedById]   as Region_LastModifiedById
+                                      ,r.[LastModifiedByName] as Region_LastModifiedByName
+                                      ,r.[LastModifiedOn]     as Region_LastModifiedOn
+                                      ,r.[Status]             as Region_Status
+            FROM Party p JOIN PartyAddress pa ON p.ID=pa.PartyID 
+                         JOIN Region r ON pa.RegionID=r.ID 
+            WHERE p.ID=@partyID ";
             SqlDao dao = new SqlDao();
             SqlCommand command = dao.GetSqlCommand(query);
             command.Parameters.Add(dao.CreateParameter("@partyID", partyID));

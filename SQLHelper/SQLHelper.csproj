@@ -42,10 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\DataPage.cs" />
-    <Compile Include="Entities\BaseEntities\PartyAddress.cs" />
-    <Compile Include="Entities\BaseEntities\Region.cs" />
-    <Compile Include="Entities\BaseEntities\BaseEntity.cs" />
-    <Compile Include="Entities\BaseEntities\Party.cs" />
+    <Compile Include="Entities\PartyAddress.cs" />
+    <Compile Include="Entities\Region.cs" />
+    <Compile Include="Entities\BaseEntity.cs" />
+    <Compile Include="Entities\Party.cs" />
     <Compile Include="Helper\DataMappers\DataMapperFactory.cs" />
     <Compile Include="Helper\DataMappers\GenericMapper.cs" />
     <Compile Include="Helper\DataMappers\IDataMapper.cs" />
