@@ -24,7 +24,10 @@ namespace SQLHelper.Helper.DataMappers
             PropertyInfo[] props = type.GetProperties();
             foreach (PropertyInfo p in props)
             {
-                if (p.PropertyType.IsValueType || p.PropertyType.BaseType == typeof(Object) || p.PropertyType.IsArray)  /// Jika antara lain int,string,datetime,guid,byte[]
+                /// ! Property yang langsung bisa diambil nilainya primitive (int,bool,dll), string,datetime, guid, byte[] :
+                // Type.IsPrimitive: Boolean, Byte, SByte, Int16, UInt16, Int32, UInt32, Int64, UInt64, IntPtr, UIntPtr, Char, Double, and Single.
+                if (p.PropertyType.IsPrimitive || p.PropertyType == typeof(string) || p.PropertyType == typeof(decimal) || p.PropertyType == typeof(DateTime)
+                    || p.PropertyType == typeof(Guid) || p.PropertyType.IsArray )  
                 {
                     try
                     {
