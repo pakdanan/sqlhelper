@@ -1,5 +1,5 @@
 # sqlhelper
-Another helper (including mapper and usage sample) library for database interaction. It is based on http://aapl.codeplex.com , but differ completely in GenericMapper.cs, cause the original version only cope with simple DTO (Data Transfer Object), meanwhile there is a need to map between field from SQL Join to property of Composite Object, eg.:
+Another helper (including mapper and usage sample) library for database interaction. It is based on http://aapl.codeplex.com , but differ completely in GenericMapper.cs, I modified it because the original version can only applied for 'Flat' Object, while mostly need is to handle Composited Object that get the data from multiple table using SQL Join Queries, as described below :
 
     string SQLquery = @"SELECT    p.*
 	                             ,pa.[ID]                 as Address_ID
