@@ -1,17 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
-using SQLHelper.Common;
+using Melissa.Library.Common;
 using System.Configuration;
-using SQLHelper.Helper.DataMappers;
+using Melissa.Library.Helper.DataMappers;
 using System.Data.SqlTypes;
 
 /// <summary>
-/// Ref : http://aapl.codeplex.com/ and http://rlacovara.blogspot.co.id/2010/01/agile-adonet-persistence-layer-part-1.html
+/// Original source : http://aapl.codeplex.com/ and http://rlacovara.blogspot.co.id/2010/01/agile-adonet-persistence-layer-part-1.html
+/// Added by pakdanan: - transaction support, - add closing sqldatareader at 'finally'
 /// </summary>
 
-namespace SQLHelper.Helper
+namespace Melissa.Library.Helper
 {
     public class SqlDao
     {
@@ -29,7 +30,7 @@ namespace SQLHelper.Helper
             {
                 if (_sharedConnection == null)
                 {
-                    _sharedConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["Party"].ConnectionString);
+                    _sharedConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["Subscription"].ConnectionString);
                 }
                 return _sharedConnection;
             }
@@ -111,7 +112,7 @@ namespace SQLHelper.Helper
         }
 
 
-        // CreateOuputParameter - with size for nvarchars
+        // CreateOuputParameter - with size for nvarchars/varchars
         public SqlParameter CreateOutputParameter(string name, SqlDbType paramType, int size)
         {
             SqlParameter parameter = new SqlParameter();
@@ -210,7 +211,7 @@ namespace SQLHelper.Helper
             parameter.Direction = ParameterDirection.Input;
             return parameter;
         }
-        
+
         // CreateParameter - Bit/Boolean
         public SqlParameter CreateParameter(string name, bool value)
         {
@@ -246,7 +247,8 @@ namespace SQLHelper.Helper
             }
             finally
             {
-                command.Connection.Close();
+                if (_trans == null)
+                    command.Connection.Close();
             }
         }
 
@@ -268,7 +270,8 @@ namespace SQLHelper.Helper
             }
             finally
             {
-                command.Connection.Close();
+                if (_trans == null)
+                    command.Connection.Close();
             }
         }
 
@@ -276,6 +279,7 @@ namespace SQLHelper.Helper
         // GetSingleValue
         public T GetSingleValue<T>(SqlCommand command)
         {
+            SqlDataReader reader = null;
             T returnValue = default(T);
             try
             {
@@ -283,7 +287,7 @@ namespace SQLHelper.Helper
                 {
                     command.Connection.Open();
                 }
-                SqlDataReader reader = command.ExecuteReader();
+                reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     reader.Read();
@@ -297,7 +301,10 @@ namespace SQLHelper.Helper
             }
             finally
             {
-                command.Connection.Close();
+                if (reader != null)
+                    reader.Close();
+                if (_trans == null)
+                    command.Connection.Close();
             }
             return returnValue;
         }
@@ -306,6 +313,7 @@ namespace SQLHelper.Helper
         // GetSingleString
         public Int32 GetSingleInt32(SqlCommand command)
         {
+            SqlDataReader reader = null;
             Int32 returnValue = default(int);
             try
             {
@@ -313,7 +321,7 @@ namespace SQLHelper.Helper
                 {
                     command.Connection.Open();
                 }
-                SqlDataReader reader = command.ExecuteReader();
+                reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     reader.Read();
@@ -327,7 +335,10 @@ namespace SQLHelper.Helper
             }
             finally
             {
-                command.Connection.Close();
+                if (reader != null)
+                    reader.Close();
+                if (_trans == null)
+                    command.Connection.Close();
             }
             return returnValue;
         }
@@ -336,6 +347,7 @@ namespace SQLHelper.Helper
         // GetSingleString
         public string GetSingleString(SqlCommand command)
         {
+            SqlDataReader reader = null;
             string returnValue = null;
             try
             {
@@ -343,7 +355,7 @@ namespace SQLHelper.Helper
                 {
                     command.Connection.Open();
                 }
-                SqlDataReader reader = command.ExecuteReader();
+                reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     reader.Read();
@@ -357,7 +369,10 @@ namespace SQLHelper.Helper
             }
             finally
             {
-                command.Connection.Close();
+                if (reader != null)
+                    reader.Close();
+                if (_trans == null)
+                    command.Connection.Close();
             }
             return returnValue;
         }
@@ -367,13 +382,14 @@ namespace SQLHelper.Helper
         public List<string> GetStringList(SqlCommand command)
         {
             List<string> returnList = null;
+            SqlDataReader reader = null;
             try
             {
                 if (command.Connection.State != ConnectionState.Open)
                 {
                     command.Connection.Open();
                 }
-                SqlDataReader reader = command.ExecuteReader();
+                reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     returnList = new List<string>();
@@ -390,7 +406,10 @@ namespace SQLHelper.Helper
             }
             finally
             {
-                command.Connection.Close();
+                if (reader != null)
+                    reader.Close();
+                if (_trans == null)
+                    command.Connection.Close();
             }
             return returnList;
         }
@@ -400,13 +419,14 @@ namespace SQLHelper.Helper
         public T GetSingle<T>(SqlCommand command) where T : class
         {
             T dto = null;
+            SqlDataReader reader = null;
             try
             {
                 if (command.Connection.State != ConnectionState.Open)
                 {
                     command.Connection.Open();
                 }
-                SqlDataReader reader = command.ExecuteReader();
+                reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     reader.Read();
@@ -421,7 +441,10 @@ namespace SQLHelper.Helper
             }
             finally
             {
-                command.Connection.Close();
+                if (reader != null)
+                    reader.Close();
+                if (_trans == null)
+                    command.Connection.Close();
             }
             // return the DTO, it's either populated with data or null.
             return dto;
@@ -432,13 +455,14 @@ namespace SQLHelper.Helper
         public List<T> GetList<T>(SqlCommand command) where T : class
         {
             List<T> dtoList = new List<T>();
+            SqlDataReader reader = null;
             try
             {
                 if (command.Connection.State != ConnectionState.Open)
                 {
                     command.Connection.Open();
                 }
-                SqlDataReader reader = command.ExecuteReader();
+                reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     IDataMapper mapper = new DataMapperFactory().GetMapper(typeof(T));
@@ -457,7 +481,10 @@ namespace SQLHelper.Helper
             }
             finally
             {
-                command.Connection.Close();
+                if (reader != null)
+                    reader.Close();
+                if (_trans == null)
+                    command.Connection.Close();
             }
             // We return either the populated list if there was data,
             // or if there was no data we return an empty list.
@@ -470,6 +497,7 @@ namespace SQLHelper.Helper
         // GetDataPage
         public DataPage<T> GetDataPage<T>(SqlCommand command, int pageIndex, int pageSize) where T : class
         {
+            SqlDataReader reader = null;
             DataPage<T> page = new DataPage<T>();
             page.PageIndex = pageIndex;
             page.PageSize = pageSize;
@@ -479,7 +507,7 @@ namespace SQLHelper.Helper
                 {
                     command.Connection.Open();
                 }
-                SqlDataReader reader = command.ExecuteReader();
+                reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     IDataMapper mapper = new DataMapperFactory().GetMapper(typeof(T));
@@ -501,7 +529,10 @@ namespace SQLHelper.Helper
             }
             finally
             {
-                command.Connection.Close();
+                if (reader != null)
+                    reader.Close();
+                if (_trans == null)
+                    command.Connection.Close();
             }
             return page;
         }
@@ -529,11 +560,7 @@ namespace SQLHelper.Helper
             }
             catch (Exception e)
             {
-                throw new Exception("Error populating data", e);
-            }
-            finally
-            {
-                _sharedConnection.Close();
+                throw new Exception("Error begin Transaction", e);
             }
 
             return _trans;
@@ -546,8 +573,21 @@ namespace SQLHelper.Helper
         {
             if (_trans != null)
             {
-                _trans.Commit();
-                _trans = null;
+                try
+                {
+                    _trans.Commit();
+
+                }
+                catch (Exception e)
+                {
+                    Rollback();
+                    throw new Exception("Error Commit Transaction", e);
+                }
+                finally
+                {
+                    if (SharedConnection.State == ConnectionState.Open)
+                        SharedConnection.Close();
+                }
             }
         }
 
@@ -558,8 +598,17 @@ namespace SQLHelper.Helper
         {
             if (_trans != null)
             {
-                _trans.Rollback();
-                _trans = null;
+                try
+
+                {
+                    _trans.Rollback();
+                }
+                catch
+                {
+                    // This catch block will handle any errors that may have occurred
+                    // on the server that would cause the rollback to fail, such as
+                    // a closed connection.
+                }
             }
         }
 
@@ -568,5 +617,3 @@ namespace SQLHelper.Helper
 
     }
 }
-
-
